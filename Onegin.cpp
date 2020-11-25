@@ -1,16 +1,16 @@
 #include <stdio.h>
-#include <sys/types.h>             //Открытие файла осуществляется с помощью функции fopen(),
-#include <sys/stat.h>              //которая возвращает указатель на структуру типа FILE,
-#include <stdlib.h>                //который можно использовать для последующих операций с файлом.
+#include <sys/types.h>             //РћС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»Р° РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ СЃ РїРѕРјРѕС‰СЊСЋ С„СѓРЅРєС†РёРё fopen(),
+#include <sys/stat.h>              //РєРѕС‚РѕСЂР°СЏ РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ С‚РёРїР° FILE,
+#include <stdlib.h>                //РєРѕС‚РѕСЂС‹Р№ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РґР»СЏ РїРѕСЃР»РµРґСѓСЋС‰РёС… РѕРїРµСЂР°С†РёР№ СЃ С„Р°Р№Р»РѕРј.
 #include <unistd.h>                //int stat(const char *file_name, struct stat *buf);
 
 int main ()
 {
-    char file_name[20] = {};
+    char file_name[20] = "";
 
-    printf ("Please enter the name of the file you want to read: ");
+    fprintf (stdout, "Please enter the name of the file you want to read: ");
     scanf  ("%s", file_name);
-    printf ("You want read %s\n", &file_name);
+    fprintf (stdout, "You want read \"%s\"\n", file_name);
 
     FILE *file = fopen (file_name, "r");
 
@@ -18,18 +18,18 @@ int main ()
 
     if (file == NULL)
     {
-        printf ("Error! The file cannot be opened.\n");
+        fprintf (stdout, "Error! The file cannot be opened.\n");
     }
 
     else
     {
-        printf ("The file is opened successfully.\n");
+        fprintf (stdout, "The file is opened successfully.\n");
     }
 
     stat (file_name, &information_buffer);
 
     int size_of_file = information_buffer.st_size;
-    printf ("Size of the file is: %ld\n", size_of_file);
+    fprintf (stdout, "Size of \"%s\" is: %d bytes.\n", file_name, size_of_file);
 
     fclose (file);
 
@@ -37,3 +37,4 @@ int main ()
 
     return 0;
 }
+
