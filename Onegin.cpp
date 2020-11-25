@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include <sys/types.h>             //Открытие файла осуществляется с помощью функции fopen(),
+#include <stdlib.h>                //Открытие файла осуществляется с помощью функции fopen(),
 #include <sys/stat.h>              //которая возвращает указатель на структуру типа FILE,
-#include <stdlib.h>                //который можно использовать для последующих операций с файлом.
+#include <sys/types.h>             //который можно использовать для последующих операций с файлом.
 #include <unistd.h>                //int stat(const char *file_name, struct stat *buf);
 
 int main ()
@@ -31,10 +31,21 @@ int main ()
     int size_of_file = information_buffer.st_size;
     fprintf (stdout, "Size of \"%s\" is: %d bytes.\n", file_name, size_of_file);
 
+    char *p_allocated_memory = NULL;
+
+    p_allocated_memory = (char*)calloc (information_buffer.st_size + 1, sizeof(char));
+
+    if (p_allocated_memory == NULL)
+    {
+        fprintf (stdout, "Error failed to allocate memory!\n");
+    }
+
+    char file_buffer[*p_allocated_memory];
+
+
+    free (p_allocated_memory);
+
     fclose (file);
-
-
 
     return 0;
 }
-
