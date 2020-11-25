@@ -8,9 +8,9 @@ int main ()
 {
     char file_name[20] = "";
 
-    fprintf (stdout, "Please enter the name of the file you want to read: ");
+    printf ("Please enter the name of the file you want to read: ");
     scanf  ("%s", file_name);
-    fprintf (stdout, "You want read \"%s\"\n", file_name);
+    printf ("You want read \"%s\"\n", file_name);
 
     FILE *file = fopen (file_name, "r");
 
@@ -18,34 +18,30 @@ int main ()
 
     if (file == NULL)
     {
-        fprintf (stdout, "Error! The file cannot be opened.\n");
+        printf ("Error! The file cannot be opened.\n");
     }
 
     else
     {
-        fprintf (stdout, "The file is opened successfully.\n");
+        printf ("The file is opened successfully.\n");
     }
 
     stat (file_name, &information_buffer);
 
     int size_of_file = information_buffer.st_size;
-    fprintf (stdout, "Size of \"%s\" is: %d bytes.\n", file_name, size_of_file);
+    printf ("Size of \"%s\" is: %d bytes.\n", file_name, size_of_file);
+    
+    char *file_buffer = (char*) calloc (size_of_file + 1, sizeof(char));
 
-    char *p_allocated_memory = NULL;
-
-    p_allocated_memory = (char*)calloc (information_buffer.st_size + 1, sizeof(char));
-
-    if (p_allocated_memory == NULL)
+    if (file_buffer == NULL)
     {
-        fprintf (stdout, "Error failed to allocate memory!\n");
+        printf ("Error failed to allocate memory!\n");
     }
 
-    char file_buffer[*p_allocated_memory];
-
-
-    free (p_allocated_memory);
-
+    fread (file_buffer, sizeof(char), size_of_file, file);
     fclose (file);
+
+    free (file_buffer);
 
     return 0;
 }
