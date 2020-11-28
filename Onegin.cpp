@@ -4,8 +4,18 @@
 #include <sys/types.h>             //который можно использовать для последующих операций с файлом.
 #include <unistd.h>                //int stat(const char *file_name, struct stat *buf);
                                    //size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
-int read_file (char* file_name, int* line_counter);
+int read_file (char* file_name, int size_of_file, int* line_counter);
 int counter_line (int f_size, char* file_buffer);
+int file_size (char* file_name);
+
+struct file_inform
+{
+    int size_of_file;
+    int number_line;
+
+};
+
+//------------------------------------------------------------------------------------------------
 
 int main ()
 {
@@ -17,15 +27,17 @@ int main ()
     scanf  ("%s", file_name);
     printf ("You want read \"%s\"\n", file_name);
 
-    size_of_file = read_file (file_name, &number_line);
+    size_of_file = file_size (file_name);
+    read_file (file_name, size_of_file, &number_line);
+
     printf ("%d", number_line);
 }
 
-int read_file (char* file_name, int* line_counter)
+//------------------------------------------------------------------------------------------------
+
+int read_file (char* file_name, int size_of_file, int* line_counter)
 {
     FILE* file = fopen (file_name, "r");
-
-    struct stat information_buffer = {};
 
     if (file == NULL)
     {
@@ -37,26 +49,24 @@ int read_file (char* file_name, int* line_counter)
         printf ("The file is opened successfully.\n");
     }
 
-    stat (file_name, &information_buffer);
-
-    printf ("Size of \"%s\" is: %d bytes.\n", file_name, information_buffer.st_size);
-
-    char* file_buffer = (char*) calloc (information_buffer.st_size + 1, sizeof(char));
+    char* file_buffer = (char*) calloc (size_of_file + 1, sizeof(char));
 
     if (file_buffer == NULL)
     {
         printf ("Error failed to allocate memory!\n");
     }
 
-    fread (file_buffer, sizeof(char), information_buffer.st_size, file);
+    fread (file_buffer, sizeof (char), size_of_file, file);
     fclose (file);
 
-    *line_counter = counter_line (information_buffer.st_size, file_buffer);
+    *line_counter = counter_line (size_of_file, file_buffer);
 
     free (file_buffer);
-    
-    return information_buffer.st_size;
+
+
 }
+
+//------------------------------------------------------------------------------------------------
 
 int counter_line (int f_size, char* file_buffer)
 {
@@ -73,4 +83,18 @@ int counter_line (int f_size, char* file_buffer)
 
     return line_counter;
 }
+
+//------------------------------------------------------------------------------------------------
+
+int file_size (char* file_name)
+{
+    struct stat information_buffer = {};
+
+    stat (file_name, &information_buffer);
+    printf ("Size of \"%s\" is: %d bytes.\n", file_name, information_buffer.st_size);
+
+    return information_buffer.st_size;
+}
+
+//------------------------------------------------------------------------------------------------
 
