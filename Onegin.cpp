@@ -4,7 +4,7 @@
 #include <sys/types.h>             //который можно использовать для последующих операций с файлом.
 #include <unistd.h>                //int stat(const char *file_name, struct stat *buf);
                                    //size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
-int read_file (char* file_name, int size_of_file, int* line_counter);
+char* read_file (char* file_name, int size_of_file, int* line_counter);
 int counter_line (int f_size, char* file_buffer);
 int file_size (char* file_name);
 
@@ -19,23 +19,22 @@ struct file_inform
 
 int main ()
 {
-    char file_name[] = "";
+    char file_name[50] = "";
     int size_of_file = 0;
     int number_line  = 0;
+    char* file_buffer = "";
 
     printf ("Please enter the name of the file you want to read: ");
     scanf  ("%s", file_name);
     printf ("You want read \"%s\"\n", file_name);
 
     size_of_file = file_size (file_name);
-    read_file (file_name, size_of_file, &number_line);
-
-    printf ("%d", number_line);
+    file_buffer = read_file (file_name, size_of_file, &number_line);
 }
 
 //------------------------------------------------------------------------------------------------
 
-int read_file (char* file_name, int size_of_file, int* line_counter)
+char* read_file (char* file_name, int size_of_file, int* line_counter)
 {
     FILE* file = fopen (file_name, "r");
 
@@ -61,9 +60,8 @@ int read_file (char* file_name, int size_of_file, int* line_counter)
 
     *line_counter = counter_line (size_of_file, file_buffer);
 
-    free (file_buffer);
-
-
+    free (file_buffer);  /////////////////!!!!!!!!!!!!!!!!!
+    return file_buffer;
 }
 
 //------------------------------------------------------------------------------------------------
@@ -97,4 +95,3 @@ int file_size (char* file_name)
 }
 
 //------------------------------------------------------------------------------------------------
-
