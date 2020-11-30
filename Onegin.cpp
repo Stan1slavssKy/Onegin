@@ -5,9 +5,9 @@
 #include <unistd.h>                //int stat(const char *file_name, struct stat *buf);
                                    //size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
 char* read_file (char* file_name, int size_of_file);
-int counter_line (int f_size, char* file_buffer, char** massive);
+int counter_line (int f_size, char* file_buffer/*, char** massive*/);
 int file_size (char* file_name);
-void Input_inform (char* file_name, struct file* inform);
+void Input_inform (char* file_name);
 
 struct file
 {
@@ -16,25 +16,21 @@ struct file
     char* file_buffer;
 };
 
+struct file* inform = {};
+
 //------------------------------------------------------------------------------------------------
 
 int main ()
 {
     char file_name[50] = "";
-    char* file_buffer  = "";
-
-    int size_of_file = 0;
-    int number_line  = 0;
-
-    struct file* inform = {};
 
     printf ("Please enter the name of the file you want to read: ");
     scanf  ("%s", file_name);
     printf ("You want read \"%s\"\n", file_name);
 
-    Input_inform (file_name, inform);
+    Input_inform (file_name);
 
-    free (file_buffer);
+  //  printf ("%d XD",inform -> size_of_file);
 }
 
 //------------------------------------------------------------------------------------------------
@@ -53,7 +49,7 @@ char* read_file (char* file_name, int size_of_file)
         printf ("The file is opened successfully.\n");
     }
 
-    char* file_buffer = (char*) calloc (size_of_file + 1, sizeof(char));
+    char* file_buffer = (char*) calloc (size_of_file, sizeof(char));
 
     if (file_buffer == NULL)
     {
@@ -70,19 +66,19 @@ char* read_file (char* file_name, int size_of_file)
 
 //------------------------------------------------------------------------------------------------
 
-int counter_line (int f_size, char* file_buffer, char** massive)
+int counter_line (int f_size, char* file_buffer/*, char** massive*/)
 {
     int line_counter = 0;
 
-    for (int i = 0; i < f_size + 1; i++)
+    for (int i = 0; i < f_size; i++)
     {
         if (*(file_buffer + i) == '\n')
         {
             line_counter++;
-             for (int k = 0; k < 250; k++) massive[k] = (file_buffer + i + 1);
+             //for (int k = 0; k < 250; k++) massive[k] = (file_buffer + i);
         }
     }
-    printf ("%d", line_counter);
+    printf ("The number of rows is %d", line_counter);
 
     return line_counter;
 }
@@ -101,18 +97,18 @@ int file_size (char* file_name)
 
 //------------------------------------------------------------------------------------------------
 
-void Input_inform (char* file_name, struct file* inform)
+void Input_inform (char* file_name)
 {
-    char* massive[250] = {};
+    //char* massive[250] = {};
 
     int size_of_file  = file_size (file_name);
 
     char* file_buffer = read_file (file_name, size_of_file);
 
-    int number_line   = counter_line (size_of_file, file_buffer, massive);
+    int number_line   = counter_line (size_of_file, file_buffer/*, massive*/);
 
-    inform -> size_of_file;
-    inform -> number_line;
-    inform -> file_buffer;
+    inform -> size_of_file = size_of_file;
+    inform -> number_line  = number_line;
+    inform -> file_buffer  = file_buffer;
+    free (file_buffer);
 }
-
