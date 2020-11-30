@@ -7,7 +7,7 @@
 char* read_file (char* file_name, int size_of_file);
 int counter_line (int f_size, char* file_buffer/*, char** massive*/);
 int file_size (char* file_name);
-void Input_inform (char* file_name);
+void Input_inform (char* file_name, struct file* inform);
 
 struct file
 {
@@ -16,21 +16,21 @@ struct file
     char* file_buffer;
 };
 
-struct file* inform = {};
-
 //------------------------------------------------------------------------------------------------
 
 int main ()
 {
-    char file_name[50] = "";
+    char file_name[50]  = "";
+    struct file* inform = (struct file*) calloc (1, sizeof (struct file));
 
     printf ("Please enter the name of the file you want to read: ");
     scanf  ("%s", file_name);
     printf ("You want read \"%s\"\n", file_name);
 
-    Input_inform (file_name);
+    Input_inform (file_name, inform);
 
-  //  printf ("%d XD",inform -> size_of_file);
+    printf ("%d XD",inform -> size_of_file);
+    free (inform);
 }
 
 //------------------------------------------------------------------------------------------------
@@ -42,6 +42,7 @@ char* read_file (char* file_name, int size_of_file)
     if (file == NULL)
     {
         printf ("Error! The file cannot be opened.\n");
+        return NULL;
     }
 
     else
@@ -54,6 +55,7 @@ char* read_file (char* file_name, int size_of_file)
     if (file_buffer == NULL)
     {
         printf ("Error failed to allocate memory!\n");
+        return NULL;
     }
 
     fread (file_buffer, sizeof (char), size_of_file, file);
@@ -97,7 +99,7 @@ int file_size (char* file_name)
 
 //------------------------------------------------------------------------------------------------
 
-void Input_inform (char* file_name)
+void Input_inform (char* file_name, struct file* inform)
 {
     //char* massive[250] = {};
 
@@ -110,5 +112,6 @@ void Input_inform (char* file_name)
     inform -> size_of_file = size_of_file;
     inform -> number_line  = number_line;
     inform -> file_buffer  = file_buffer;
+    
     free (file_buffer);
 }
