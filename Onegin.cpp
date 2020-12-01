@@ -8,8 +8,9 @@
 char* read_file (char* file_name, int size_of_file);
 int counter_line (int f_size, char* file_buffer);
 int file_size (char* file_name);
-int Placing_pointers (struct file* inform, struct str* data);
+void Placing_pointers (struct file* inform, struct str* data);
 void Input_inform (char* file_name, struct file* inform);
+void Free_memory (struct file* inform);
 
 struct file
 {
@@ -38,9 +39,9 @@ int main ()
 
     Input_inform (file_name, inform);
     Placing_pointers (inform, data);
+    Free_memory (inform);
 
-    free (inform);
-    free (inform -> file_buffer);
+    free (data);
 }
 
 //------------------------------------------------------------------------------------------------
@@ -121,13 +122,11 @@ void Input_inform (char* file_name, struct file* inform)
 
 //------------------------------------------------------------------------------------------------
 
-int Placing_pointers (struct file* inform, struct str* data)
+void Placing_pointers (struct file* inform, struct str* data)
 {
-    char** p_beg_line = (char**) calloc (inform -> number_line, sizeof(char*)); //массив указателей
-
     data = (struct str*) calloc (inform -> number_line, sizeof(struct str));
 
-    char* p_beg_str = inform -> file_buffer;
+    char* p_beg_str = inform -> file_buffer - 1;
     char* p_end_str = NULL;
 
     for (int i = 0; i < inform -> number_line; i++)
@@ -139,16 +138,13 @@ int Placing_pointers (struct file* inform, struct str* data)
 
         p_beg_str = p_end_str + 1;
     }
-
-    printf ("%d\n", (data) -> str_length);
-    printf ("FFFFF");
-    free (p_beg_line);
-    free (data);
 }
 
 //------------------------------------------------------------------------------------------------
 
-/*void free_memory ()
+void Free_memory (struct file* inform)
 {
-
-}  */
+  //  free (data_mem);
+    free (inform);
+    free (inform -> file_buffer);
+}
