@@ -29,8 +29,8 @@ int main ()
 
     Input_inform (file_name, inform);
 
-    printf ("%d XD",inform -> size_of_file);
     free (inform);
+    free (inform -> file_buffer);
 }
 
 //------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ int counter_line (int f_size, char* file_buffer/*, char** massive*/)
              //for (int k = 0; k < 250; k++) massive[k] = (file_buffer + i);
         }
     }
-    printf ("The number of rows is %d", line_counter);
+    printf ("The number of rows is %d\n", line_counter);
 
     return line_counter;
 }
@@ -112,6 +112,4 @@ void Input_inform (char* file_name, struct file* inform)
     inform -> size_of_file = size_of_file;
     inform -> number_line  = number_line;
     inform -> file_buffer  = file_buffer;
-    
-    free (file_buffer);
 }
