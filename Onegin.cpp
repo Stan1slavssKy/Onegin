@@ -123,32 +123,25 @@ void Input_inform (char* file_name, struct file* inform)
 
 int Placing_pointers (struct file* inform, struct str* data)
 {
-    char** p_beg_line = (char**) calloc (inform -> number_line, sizeof(char*));
-    int k = 0;
-
-    for (int i = 0; i < inform -> size_of_file; i++)
-    {                                                    //указатель на адрес начала массива указателей = адрес
-        if (*(inform -> file_buffer + i) = '\n')
-        {
-            k++;
-            p_beg_line[k] = (inform -> file_buffer + i + 1);
-        }
-    }
-
-    p_beg_line[0] = (inform -> file_buffer + 0);
+    char** p_beg_line = (char**) calloc (inform -> number_line, sizeof(char*)); //массив указателей
 
     data = (struct str*) calloc (inform -> number_line, sizeof(struct str));
 
-    char* p_begin_str = inform -> file_buffer;
-    char* p_end_str   = inform -> file_buffer;
-    
-    for (int k = 0; k < inform -> number_line; k++)
+    char* p_beg_str = inform -> file_buffer;
+    char* p_end_str = NULL;
+
+    for (int i = 0; i < inform -> number_line; i++)
     {
-        
-         = strchr (begin_line, '\n');
-        
+        p_end_str = strchr (p_beg_str, '\n');
+
+        (data + i) -> p_begin_str = p_beg_str;
+        (data + i) -> str_length  = p_end_str - p_beg_str;
+
+        p_beg_str = p_end_str + 1;
     }
 
+    printf ("%d\n", (data) -> str_length);
+    printf ("FFFFF");
     free (p_beg_line);
     free (data);
 }
