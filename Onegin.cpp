@@ -1,12 +1,14 @@
 #include <stdio.h>                 //FILE *fopen(const char *fname, const char *mode)
 #include <stdlib.h>                //Открытие файла осуществляется с помощью функции fopen(),
-#include <sys/stat.h>              //которая возвращает указатель на структуру типа FILE,
-#include <sys/types.h>             //который можно использовать для последующих операций с файлом.
-#include <unistd.h>                //int stat(const char *file_name, struct stat *buf);
-                                   //size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
+#include <string.h>                //которая возвращает указатель на структуру типа FILE,
+#include <sys/stat.h>              //который можно использовать для последующих операций с файлом.
+#include <sys/types.h>             //int stat(const char *file_name, struct stat *buf);
+#include <unistd.h>                //size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
+
 char* read_file (char* file_name, int size_of_file);
-int counter_line (int f_size, char* file_buffer/*, char** massive*/);
+int counter_line (int f_size, char* file_buffer);
 int file_size (char* file_name);
+int Placing_pointers (struct file* inform, struct str* data);
 void Input_inform (char* file_name, struct file* inform);
 
 struct file
@@ -16,18 +18,26 @@ struct file
     char* file_buffer;
 };
 
+struct str
+{
+    char* p_begin_str;
+    int   str_length;
+};
+
 //------------------------------------------------------------------------------------------------
 
 int main ()
 {
     char file_name[50]  = "";
     struct file* inform = (struct file*) calloc (1, sizeof (struct file));
+    struct str* data = NULL;
 
     printf ("Please enter the name of the file you want to read: ");
     scanf  ("%s", file_name);
     printf ("You want read \"%s\"\n", file_name);
 
     Input_inform (file_name, inform);
+    Placing_pointers (inform, data);
 
     free (inform);
     free (inform -> file_buffer);
@@ -61,8 +71,6 @@ char* read_file (char* file_name, int size_of_file)
     fread (file_buffer, sizeof (char), size_of_file, file);
     fclose (file);
 
-      ///free//////////////!!!!!!!!!!!!!!!!!
-
     return file_buffer;
 }
 
@@ -77,7 +85,6 @@ int counter_line (int f_size, char* file_buffer/*, char** massive*/)
         if (*(file_buffer + i) == '\n')
         {
             line_counter++;
-             //for (int k = 0; k < 250; k++) massive[k] = (file_buffer + i);
         }
     }
     printf ("The number of rows is %d\n", line_counter);
@@ -101,15 +108,54 @@ int file_size (char* file_name)
 
 void Input_inform (char* file_name, struct file* inform)
 {
-    //char* massive[250] = {};
-
     int size_of_file  = file_size (file_name);
 
     char* file_buffer = read_file (file_name, size_of_file);
 
-    int number_line   = counter_line (size_of_file, file_buffer/*, massive*/);
+    int number_line   = counter_line (size_of_file, file_buffer);
 
     inform -> size_of_file = size_of_file;
     inform -> number_line  = number_line;
     inform -> file_buffer  = file_buffer;
 }
+
+//------------------------------------------------------------------------------------------------
+
+int Placing_pointers (struct file* inform, struct str* data)
+{
+    char** p_beg_line = (char**) calloc (inform -> number_line, sizeof(char*));
+    int k = 0;
+
+    for (int i = 0; i < inform -> size_of_file; i++)
+    {                                                    //указатель на адрес начала массива указателей = адрес
+        if (*(inform -> file_buffer + i) = '\n')
+        {
+            k++;
+            p_beg_line[k] = (inform -> file_buffer + i + 1);
+        }
+    }
+
+    p_beg_line[0] = (inform -> file_buffer + 0);
+
+    data = (struct str*) calloc (inform -> number_line, sizeof(struct str));
+
+    char* p_begin_str = inform -> file_buffer;
+    char* p_end_str   = inform -> file_buffer;
+    
+    for (int k = 0; k < inform -> number_line; k++)
+    {
+        
+         = strchr (begin_line, '\n');
+        
+    }
+
+    free (p_beg_line);
+    free (data);
+}
+
+//------------------------------------------------------------------------------------------------
+
+/*void free_memory ()
+{
+
+}  */
