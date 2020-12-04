@@ -5,12 +5,12 @@
 #include <sys/types.h>             //int stat(const char *file_name, struct stat *buf);
 #include <unistd.h>                //size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
 
-char* read_file (char* file_name, int size_of_file);
-int counter_line (int f_size, char* file_buffer);
-int file_size (char* file_name);
-void Placing_pointers (struct file* inform, struct str* data);
-void Input_inform (char* file_name, struct file* inform);
-void Free_memory (struct file* inform);
+char *read_file     (char* file_name, int size_of_file);
+int  counter_line   (int f_size, char* file_buffer);
+int  file_size      (char* file_name);
+void place_pointers (struct file* inform, struct str* data);
+void input_inform   (char* file_name, struct file* inform);
+void free_memory    (struct file* inform);
 
 struct file
 {
@@ -27,19 +27,24 @@ struct str
 
 //------------------------------------------------------------------------------------------------
 
-int main ()
+int main (int argc, char* argv[])
 {
-    char file_name[50]  = "";
+    char* file_name = "";
+
+    if (argc == 2) file_name = argv[1];
+    else if (argc == 1) printf ("You didn't enter the file name.\n");
+    else printf ("Error to few arguments.\n");
+
     struct file* inform = (struct file*) calloc (1, sizeof (struct file));
     struct str* data = NULL;
 
-    printf ("Please enter the name of the file you want to read: ");
+    //printf ("Please enter the name of the file you want to read: ");
     scanf  ("%s", file_name);
     printf ("You want read \"%s\"\n", file_name);
 
-    Input_inform (file_name, inform);
-    Placing_pointers (inform, data);
-    Free_memory (inform);
+    input_inform (file_name, inform);
+    place_pointers (inform, data);
+    free_memory (inform);
 
     free (data);
 }
@@ -107,7 +112,7 @@ int file_size (char* file_name)
 
 //------------------------------------------------------------------------------------------------
 
-void Input_inform (char* file_name, struct file* inform)
+void input_inform (char* file_name, struct file* inform)
 {
     int size_of_file  = file_size (file_name);
 
@@ -122,7 +127,7 @@ void Input_inform (char* file_name, struct file* inform)
 
 //------------------------------------------------------------------------------------------------
 
-void Placing_pointers (struct file* inform, struct str* data)
+void place_pointers (struct file* inform, struct str* data)
 {
     data = (struct str*) calloc (inform -> number_line, sizeof(struct str));
 
@@ -142,9 +147,17 @@ void Placing_pointers (struct file* inform, struct str* data)
 
 //------------------------------------------------------------------------------------------------
 
-void Free_memory (struct file* inform)
+void free_memory (struct file* inform)
 {
   //  free (data_mem);
     free (inform);
     free (inform -> file_buffer);
 }
+
+//------------------------------------------------------------------------------------------------
+
+
+
+
+
+
