@@ -1,16 +1,18 @@
-#include <stdio.h>                 //FILE *fopen(const char *fname, const char *mode)
-#include <stdlib.h>                //Открытие файла осуществляется с помощью функции fopen(),
-#include <string.h>                //которая возвращает указатель на структуру типа FILE,
-#include <sys/stat.h>              //который можно использовать для последующих операций с файлом.
-#include <sys/types.h>             //int stat(const char *file_name, struct stat *buf);
-#include <unistd.h>                //size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
+#include <stdio.h>                 // FILE *fopen(const char *fname, const char *mode)
+#include <stdlib.h>                // Открытие файла осуществляется с помощью функции fopen(),
+#include <string.h>                // которая возвращает указатель на структуру типа FILE,
+#include <sys/stat.h>              // который можно использовать для последующих операций с файлом.
+#include <sys/types.h>             // int stat(const char *file_name, struct stat *buf);
+#include <locale.h>                // size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
 
-char *read_file     (char* file_name, int size_of_file);
-int  counter_line   (int f_size, char* file_buffer);
-int  file_size      (char* file_name);
-void place_pointers (struct file* inform, struct str* data);
-void input_inform   (char* file_name, struct file* inform);
-void free_memory    (struct file* inform);
+
+char *read_file        (char* file_name, int size_of_file);
+int  counter_line      (int f_size, char* file_buffer);
+int  file_size         (char* file_name);
+void place_pointers    (struct file* inform, struct str* data);
+void input_inform      (char* file_name, struct file* inform);
+void free_memory       (struct file* inform);
+void direct_comparator (struct* data);
 
 struct file
 {
@@ -29,22 +31,30 @@ struct str
 
 int main (int argc, char* argv[])
 {
-    char* file_name = "";
-
-    if (argc == 2) file_name = argv[1];
-    else if (argc == 1) printf ("You didn't enter the file name.\n");
-    else printf ("Error to few arguments.\n");
-
+    char* file_name = "Hamlet.txt";
+    struct str*    data = NULL;
     struct file* inform = (struct file*) calloc (1, sizeof (struct file));
-    struct str* data = NULL;
 
-    //printf ("Please enter the name of the file you want to read: ");
-    scanf  ("%s", file_name);
-    printf ("You want read \"%s\"\n", file_name);
+  /*  if (argc == 2)
+    {
+        file_name = argv[1]; 
+        printf ("You want read \"%s\"\n", file_name);   
+    }
+    else if (argc == 1)
+    {
+        printf ("You didn't enter the file name. Please return program and enter file name.\n");
+        return 0;
+    }
+    else 
+    {
+        printf ("Error to few or too many arguments.\n");
+        return 0;
+    }*/
 
-    input_inform (file_name, inform);
-    place_pointers (inform, data);
-    free_memory (inform);
+    input_inform     (file_name, inform);
+    place_pointers   (inform, data);
+    direct_comparator(data);
+    free_memory      (inform);
 
     free (data);
 }
@@ -82,17 +92,18 @@ char* read_file (char* file_name, int size_of_file)
 
 //------------------------------------------------------------------------------------------------
 
-int counter_line (int f_size, char* file_buffer/*, char** massive*/)
+int counter_line (int f_size, char* file_buffer)
 {
+    char* beg_line   = file_buffer;
+    char* end_line   = NULL;
     int line_counter = 0;
 
-    for (int i = 0; i < f_size; i++)
+    while ((end_line = strchr (beg_line, '\n')) != NULL)
     {
-        if (*(file_buffer + i) == '\n')
-        {
-            line_counter++;
-        }
+        beg_line = end_line + 1;
+        line_counter++;
     }
+
     printf ("The number of rows is %d\n", line_counter);
 
     return line_counter;
@@ -156,8 +167,13 @@ void free_memory (struct file* inform)
 
 //------------------------------------------------------------------------------------------------
 
+void direct_comparator (struct* data)
+{
+    char* line_beg = (data + i) -> p_begin;
+    char* line_end = (data + i) -> p_begin;          
+}
 
+void quicksort ()
+{
 
-
-
-
+}
