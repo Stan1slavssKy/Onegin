@@ -5,14 +5,13 @@
 #include <sys/types.h>             // int stat(const char *file_name, struct stat *buf);
 #include <locale.h>                // size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
 
-
-char *read_file        (char* file_name, int size_of_file);
-int  counter_line      (int f_size, char* file_buffer);
-int  file_size         (char* file_name);
-void place_pointers    (struct file* inform, struct str* data);
-void input_inform      (char* file_name, struct file* inform);
-void free_memory       (struct file* inform);
-void direct_comparator (struct* data);
+char     *read_file        (char* file_name, int size_of_file);
+int      counter_line      (int f_size, char* file_buffer);
+int      file_size         (char* file_name);
+struct str* place_pointers (struct file* inform, struct str* data);
+void     input_inform      (char* file_name, struct file* inform);
+void     free_memory       (struct file* inform, struct str* data);
+void     direct_comparator (struct str* data);
 
 struct file
 {
@@ -51,12 +50,12 @@ int main (int argc, char* argv[])
         return 0;
     }*/
 
-    input_inform     (file_name, inform);
-    place_pointers   (inform, data);
+    input_inform (file_name, inform);
+    data = place_pointers (inform, data);
+    
     direct_comparator(data);
-    free_memory      (inform);
-
-    free (data);
+    
+    free_memory (inform, data);
 }
 
 //------------------------------------------------------------------------------------------------
@@ -125,11 +124,9 @@ int file_size (char* file_name)
 
 void input_inform (char* file_name, struct file* inform)
 {
-    int size_of_file  = file_size (file_name);
-
+    int  size_of_file = file_size (file_name);
     char* file_buffer = read_file (file_name, size_of_file);
-
-    int number_line   = counter_line (size_of_file, file_buffer);
+    int   number_line = counter_line (size_of_file, file_buffer);
 
     inform -> size_of_file = size_of_file;
     inform -> number_line  = number_line;
@@ -138,9 +135,9 @@ void input_inform (char* file_name, struct file* inform)
 
 //------------------------------------------------------------------------------------------------
 
-void place_pointers (struct file* inform, struct str* data)
+struct str* place_pointers (struct file* inform, struct str* data)
 {
-    data = (struct str*) calloc (inform -> number_line, sizeof(struct str));
+    data = (struct str*) calloc (inform -> number_line, sizeof (struct str));
 
     char* p_beg_str = inform -> file_buffer - 1;
     char* p_end_str = NULL;
@@ -154,26 +151,104 @@ void place_pointers (struct file* inform, struct str* data)
 
         p_beg_str = p_end_str + 1;
     }
+    return data;
 }
 
 //------------------------------------------------------------------------------------------------
 
-void free_memory (struct file* inform)
+void free_memory (struct file* inform, struct str* data)
 {
-  //  free (data_mem);
     free (inform);
     free (inform -> file_buffer);
+    free (data);
 }
 
 //------------------------------------------------------------------------------------------------
 
-void direct_comparator (struct* data)
+int direct_comporator (struct str* data)
 {
-    char* line_beg = (data + i) -> p_begin;
-    char* line_end = (data + i) -> p_begin;          
+    char* line1_begin = (data + 1) -> p_begin;
+    char* line2_begin = (data + 2) -> p_begin;
+
+    char* line1_end = line1_begin + (data + 1) -> strlen;
+    char* line2_end = line2_begin + (data + 2) -> strlen;              // ABCD ABCDE
+
+    while ((!isalpha(*line1_begin)) && (line1_begin != line1_end))//   WKVVBRJLK,
+    {                                     //запятая например   //
+        line1_begin++;                                         // проверки на то чтобы в начале
+    }                                                          // слова не стояла хрень
+                                                               //
+    while ((!isalpha(*line2_begin)) && (line2_begin != line2_end))//
+    {                                                          //
+        line2_begin++;                                         //
+    }
+
+    while ((*line1_begin == *line2_begin) && (line1_begin != line1_end)
+                                          && (line2_begin != line2_end))
+    {
+        line1_begin++;
+        line2_begin++;
+
+        while ((!isalpha(*line1_begin)) && (*line1_begin == ' ')
+                                        && (line1_begin  != line1_end))
+        {
+            line1_begin++;
+        }
+
+        while ((!isalpha(*line2_begin)) && (*line2_begin == ' ')
+                                        && (line2_begin  != line2_end))
+        {
+            line2_begin++;
+        }
+    }
+
+    return ((*line1_begin) - (*line2_begin));   //BCD < EFG
 }
 
-void quicksort ()
+int reverse_comporator (struct str* data)
+{
+    char* line1_begin = (data + 1) -> p_begin;
+    char* line2_begin = (data + 2) -> p_begin;
+
+    char* line1_end = line1_begin + (data + 1) -> strlen;
+    char* line2_end = line2_begin + (data + 2) -> strlen;             
+
+    while ((!isalpha(*line1_end)) && (line1_end != line1_begin))//   WKVVBRJLK,
+    {                                     //запятая например   //
+        line1_end--;                                         // проверки на то чтобы в КОНЦЕ
+    }                                                          // слова не стояла хрень
+                                                               //
+    while ((!isalpha(*line2_end)) && (line2_end != line2_begin))//
+    {                                                          //
+        line2_end--;                                         //
+    }
+
+    while ((*line1_end == *line2_end) && (line1_end != line1_begin)
+                                      && (line2_end != line2_begin))
+    {
+        line1_end--;
+        line2_end--;
+
+        while ((!isalpha(*line1_end)) && (*line1_end == ' ')
+                                      && (line1_end  != line1_begin))
+        {
+            line1_end--;
+        }
+
+        while ((!isalpha(*line2_end)) && (*line2_end == ' ')
+                                      && (line2_end  != line2_begin))
+        {
+            line2_end--;
+        }
+    }
+
+    return ((*line1_end) - (*line2_end));   //BCD < EFG
+}
+
+void bubble_sort ()
 {
 
 }
+
+
+
