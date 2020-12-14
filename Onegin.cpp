@@ -4,6 +4,7 @@
 #include <sys/stat.h>              // который можно использовать для последующих операций с файлом.
 #include <sys/types.h>             // int stat(const char *file_name, struct stat *buf);
 #include <locale.h>                // size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
+#include <ctype.h>
 
 char* read_file (char* file_name, int size_of_file);
 
@@ -11,7 +12,7 @@ struct str* place_pointers (struct file* inform, struct str* data);
 
 int counter_line       (int f_size, char* file_buffer);
 int file_size          (char* file_name);
-int direct_comparator  (struct str* data);
+int direct_comparator  (struct str* data, int j);
 int reverse_comporator (struct str* data, int j);
 
 void input_inform  (char* file_name, struct file* inform);
@@ -34,23 +35,23 @@ struct str
 
 //------------------------------------------------------------------------------------------------
 
-int main (/*int argc, char* argv[]*/) 
+int main (int argc, char* argv[])
 {
-    char* file_name = "Hamlet.txt";
+    char* file_name = "hamlet.txt";
     struct str*    data = NULL;
     struct file* inform = (struct file*) calloc (1, sizeof (struct file));
 
   /*  if (argc == 2)
     {
-        file_name = argv[1]; 
-        printf ("You want read \"%s\"\n", file_name);   
+        file_name = argv[1];
+        printf ("You want read \"%s\"\n", file_name);
     }
     else if (argc == 1)
     {
         printf ("You didn't enter the file name. Please return program and enter file name.\n");
         return 0;
     }
-    else 
+    else
     {
         printf ("Error to few or too many arguments.\n");
         return 0;
@@ -58,9 +59,9 @@ int main (/*int argc, char* argv[]*/)
 
     input_inform (file_name, inform);
     data = place_pointers (inform, data);
-    
-    direct_comparator(data);
-    
+
+    bubble_sort (data, inform);
+
     free_memory (inform, data);
 }
 
@@ -68,7 +69,7 @@ int main (/*int argc, char* argv[]*/)
 
 char* read_file (char* file_name, int size_of_file)
 {
-    FILE* file = fopen (file_name, "r");
+    FILE* file = fopen (file_name, "rb");
 
     if (file == NULL)
     {
@@ -108,6 +109,8 @@ int counter_line (int f_size, char* file_buffer)
         beg_line = end_line + 1;
         line_counter++;
     }
+
+    line_counter++;
 
     printf ("The number of rows is %d\n", line_counter);
 
@@ -171,22 +174,22 @@ void free_memory (struct file* inform, struct str* data)
 
 //------------------------------------------------------------------------------------------------
 
-int direct_comporator (struct str* data, int j)
+int direct_comparator (struct str* data, int j)
 {
-    char* line1_begin = (data + j) -> p_begin;
-    char* line2_begin = (data + j + 1) -> p_begin;
+    char* line1_begin = (data + j) -> p_begin_str;
+    char* line2_begin = (data + j + 1) -> p_begin_str;
 
-    char* line1_end = line1_begin + (data + j) -> strlen;
-    char* line2_end = line2_begin + (data + j + 1) -> strlen;              // ABCD ABCDE
+    char* line1_end = line1_begin + (data + j) -> str_length;
+    char* line2_end = line2_begin + (data + j + 1) -> str_length;
 
-    while ((!isalpha(*line1_begin)) && (line1_begin != line1_end))//   WKVVBRJLK,
-    {                                     //запятая например   //
-        line1_begin++;                                         // проверки на то чтобы в начале
-    }                                                          // слова не стояла хрень
-                                                               //
-    while ((!isalpha(*line2_begin)) && (line2_begin != line2_end))//
-    {                                                          //
-        line2_begin++;                                         //
+    while ((!isalpha(*line1_begin)) && (line1_begin != line1_end))
+    {
+        line1_begin++;
+    }
+
+    while ((!isalpha(*line2_begin)) && (line2_begin != line2_end))
+    {
+        line2_begin++;
     }
 
     while ((*line1_begin == *line2_begin) && (line1_begin != line1_end)
@@ -208,27 +211,27 @@ int direct_comporator (struct str* data, int j)
         }
     }
 
-    return ((*line2_begin) - (*line1_begin));   //BCD < EFG
+    return ((*line2_begin) - (*line1_begin));
 }
 
 //------------------------------------------------------------------------------------------------
 
 int reverse_comporator (struct str* data, int j)
 {
-    char* line1_begin = (data + j) -> p_begin;
-    char* line2_begin = (data + j + 1) -> p_begin;
+    char* line1_begin = (data + j) -> p_begin_str;
+    char* line2_begin = (data + j + 1) -> p_begin_str;
 
-    char* line1_end = line1_begin + (data + j) -> strlen;
-    char* line2_end = line2_begin + (data + j + 1) -> strlen;             
+    char* line1_end = line1_begin + (data + j) -> str_length;
+    char* line2_end = line2_begin + (data + j + 1) -> str_length;
 
-    while ((!isalpha(*line1_end)) && (line1_end != line1_begin))//   WKVVBRJLK,
-    {                                     //запятая например   //
-        line1_end--;                                         // проверки на то чтобы в КОНЦЕ
-    }                                                          // слова не стояла хрень
-                                                               //
-    while ((!isalpha(*line2_end)) && (line2_end != line2_begin))//
-    {                                                          //
-        line2_end--;                                         //
+    while ((!isalpha(*line1_end)) && (line1_end != line1_begin))
+    {
+        line1_end--;
+    }
+
+    while ((!isalpha(*line2_end)) && (line2_end != line2_begin))
+    {
+        line2_end--;
     }
 
     while ((*line1_end == *line2_end) && (line1_end != line1_begin)
@@ -250,7 +253,7 @@ int reverse_comporator (struct str* data, int j)
         }
     }
 
-    return ((*line2_end) - (*line1_end));   //BCD < EFG
+    return ((*line2_end) - (*line1_end));
 }
 
 //------------------------------------------------------------------------------------------------
@@ -261,21 +264,32 @@ void bubble_sort (struct str* data, struct file* inform)
     {
         for (int j = 0; j < (inform -> number_line) - i - 2; j++)
         {
-            if (direct_comparator(data, j) < 0)
+            if ((direct_comparator(data, j)) < 0)
             {
                 swap_pointers (data, j);
             }
         }
+    }
+    printf ("TEXT has been sorted\n");
 }
 
 //------------------------------------------------------------------------------------------------
 
 void swap_pointers (struct str* data, int j)
 {
-    int temp = (data + j) -> p_begin_str;
-    
-    (data + j) -> p_begin_str = (data + j + 1) -> p_begin_str;
-    (data + j + 1) -> p_begin_str = temp;
+    char* temp = ((data + j) -> p_begin_str);
+
+    ((data + j) -> p_begin_str) = ((data + j + 1) -> p_begin_str);
+    ((data + j + 1) -> p_begin_str) = temp;
 }
 
 //------------------------------------------------------------------------------------------------
+
+void print_text ()
+{
+
+
+}
+
+//------------------------------------------------------------------------------------------------
+
