@@ -5,13 +5,19 @@
 #include <sys/types.h>             // int stat(const char *file_name, struct stat *buf);
 #include <locale.h>                // size_t fread(void *буфер, size_t число_байту size_t объем, FILE *fp);
 
-char     *read_file        (char* file_name, int size_of_file);
-int      counter_line      (int f_size, char* file_buffer);
-int      file_size         (char* file_name);
+char* read_file (char* file_name, int size_of_file);
+
 struct str* place_pointers (struct file* inform, struct str* data);
-void     input_inform      (char* file_name, struct file* inform);
-void     free_memory       (struct file* inform, struct str* data);
-void     direct_comparator (struct str* data);
+
+int counter_line       (int f_size, char* file_buffer);
+int file_size          (char* file_name);
+int direct_comparator  (struct str* data);
+int reverse_comporator (struct str* data, int j);
+
+void input_inform  (char* file_name, struct file* inform);
+void free_memory   (struct file* inform, struct str* data);
+void swap_pointers (struct str* data, int j);
+void bubble_sort   (struct str* data, struct file* inform);
 
 struct file
 {
@@ -165,13 +171,13 @@ void free_memory (struct file* inform, struct str* data)
 
 //------------------------------------------------------------------------------------------------
 
-int direct_comporator (struct str* data)
+int direct_comporator (struct str* data, int j)
 {
-    char* line1_begin = (data + 1) -> p_begin;
-    char* line2_begin = (data + 2) -> p_begin;
+    char* line1_begin = (data + j) -> p_begin;
+    char* line2_begin = (data + j + 1) -> p_begin;
 
-    char* line1_end = line1_begin + (data + 1) -> strlen;
-    char* line2_end = line2_begin + (data + 2) -> strlen;              // ABCD ABCDE
+    char* line1_end = line1_begin + (data + j) -> strlen;
+    char* line2_end = line2_begin + (data + j + 1) -> strlen;              // ABCD ABCDE
 
     while ((!isalpha(*line1_begin)) && (line1_begin != line1_end))//   WKVVBRJLK,
     {                                     //запятая например   //
@@ -202,16 +208,18 @@ int direct_comporator (struct str* data)
         }
     }
 
-    return ((*line1_begin) - (*line2_begin));   //BCD < EFG
+    return ((*line2_begin) - (*line1_begin));   //BCD < EFG
 }
 
-int reverse_comporator (struct str* data)
-{
-    char* line1_begin = (data + 1) -> p_begin;
-    char* line2_begin = (data + 2) -> p_begin;
+//------------------------------------------------------------------------------------------------
 
-    char* line1_end = line1_begin + (data + 1) -> strlen;
-    char* line2_end = line2_begin + (data + 2) -> strlen;             
+int reverse_comporator (struct str* data, int j)
+{
+    char* line1_begin = (data + j) -> p_begin;
+    char* line2_begin = (data + j + 1) -> p_begin;
+
+    char* line1_end = line1_begin + (data + j) -> strlen;
+    char* line2_end = line2_begin + (data + j + 1) -> strlen;             
 
     while ((!isalpha(*line1_end)) && (line1_end != line1_begin))//   WKVVBRJLK,
     {                                     //запятая например   //
@@ -242,13 +250,32 @@ int reverse_comporator (struct str* data)
         }
     }
 
-    return ((*line1_end) - (*line2_end));   //BCD < EFG
+    return ((*line2_end) - (*line1_end));   //BCD < EFG
 }
 
-void bubble_sort ()
+//------------------------------------------------------------------------------------------------
+
+void bubble_sort (struct str* data, struct file* inform)
 {
-
+    for (int i = 0; i < (inform -> number_line) - 2; i++)
+    {
+        for (int j = 0; j < (inform -> number_line) - i - 2; j++)
+        {
+            if (direct_comparator(data, j) < 0)
+            {
+                swap_pointers (data, j);
+            }
+        }
 }
 
+//------------------------------------------------------------------------------------------------
 
+void swap_pointers (struct str* data, int j)
+{
+    int temp = (data + j) -> p_begin_str;
+    
+    (data + j) -> p_begin_str = (data + j + 1) -> p_begin_str;
+    (data + j + 1) -> p_begin_str = temp;
+}
 
+//------------------------------------------------------------------------------------------------
