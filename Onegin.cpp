@@ -34,7 +34,7 @@ struct str
 
 //------------------------------------------------------------------------------------------------
 
-int main (int argc, char* argv[])
+int main (/*int argc, char* argv[]*/) 
 {
     char* file_name = "Hamlet.txt";
     struct str*    data = NULL;
