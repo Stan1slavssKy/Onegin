@@ -19,6 +19,7 @@ void input_inform  (char* file_name, struct file* inform);
 void free_memory   (struct file* inform, struct str* data);
 void swap_pointers (struct str* data, int j);
 void bubble_sort   (struct str* data, struct file* inform);
+void print_text    (struct str* data, struct file* inform);
 
 struct file
 {
@@ -35,7 +36,7 @@ struct str
 
 //------------------------------------------------------------------------------------------------
 
-int main (int argc, char* argv[])
+int main (/*int argc, char* argv[]*/)
 {
     char* file_name = "hamlet.txt";
     struct str*    data = NULL;
@@ -61,7 +62,7 @@ int main (int argc, char* argv[])
     data = place_pointers (inform, data);
 
     bubble_sort (data, inform);
-
+    print_text  (data, inform);
     free_memory (inform, data);
 }
 
@@ -90,7 +91,7 @@ char* read_file (char* file_name, int size_of_file)
         return NULL;
     }
 
-    fread (file_buffer, sizeof (char), size_of_file, file);
+    fread  (file_buffer, sizeof (char), size_of_file, file);
     fclose (file);
 
     return file_buffer;
@@ -285,10 +286,12 @@ void swap_pointers (struct str* data, int j)
 
 //------------------------------------------------------------------------------------------------
 
-void print_text ()
+void print_text (struct str* data, struct file* inform)
 {
-
-
+    char* sorted_filename = "hamlet_sorted.txt";
+    FILE* finish_file = fopen (sorted_filename, "wb");
+    fwrite (((data)->p_begin_str), sizeof(char), inform->size_of_file, finish_file);
+    free(finish_file);
 }
 
-//------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
