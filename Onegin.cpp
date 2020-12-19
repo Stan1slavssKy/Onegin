@@ -61,8 +61,8 @@ int main (/*int argc, char* argv[]*/)
     input_inform (file_name, inform);
     data = place_pointers (inform, data);
 
-    //bubble_sort (data, inform);
-    qsort (data, inform -> number_line, sizeof (struct str), (int(*) (const void *, const void *)) direct_comparator);
+    bubble_sort (data, inform);
+   // qsort (data, inform -> number_line, sizeof (struct str), (int(*) (const void *, const void *)) direct_comparator);
     print_text  (data, inform);
     free_memory (inform, data);
 }
@@ -270,7 +270,7 @@ void bubble_sort (struct str* data, struct file* inform)
     {
         for (int j = 0; j < (inform -> number_line) - i - 2; j++)
         {
-            if ((direct_comparator((data + j), (data + j + 1)) < 0))
+            if ((direct_comparator((data + j), (data + j + 1)) > 0))
             {
                 swap_pointers (data, j);
             }
@@ -283,10 +283,10 @@ void bubble_sort (struct str* data, struct file* inform)
 
 void swap_pointers (struct str* data, int j)
 {
-    char* temp = ((data + j) -> p_begin_str);
+    struct str temp = *(data + j + 1);
 
-    ((data + j) -> p_begin_str) = ((data + j + 1) -> p_begin_str);
-    ((data + j + 1) -> p_begin_str) = temp;
+    *(data + j + 1) = *(data + j);
+    *(data + j) = temp;
 }
 
 //------------------------------------------------------------------------------------------------
