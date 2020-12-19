@@ -12,7 +12,7 @@ struct str* place_pointers (struct file* inform, struct str* data);
 
 int counter_line       (int f_size, char* file_buffer);
 int file_size          (char* file_name);
-int direct_comparator  (struct str* data, int j);
+int direct_comparator (const void* data1, const void* data2);
 int reverse_comporator (struct str* data, int j);
 
 void input_inform  (char* file_name, struct file* inform);
@@ -61,7 +61,8 @@ int main (/*int argc, char* argv[]*/)
     input_inform (file_name, inform);
     data = place_pointers (inform, data);
 
-    bubble_sort (data, inform);
+    //bubble_sort (data, inform);
+    qsort (data, inform -> number_line, sizeof (struct str*), (int(*) (const void *, const void *)) direct_comparator);
     print_text  (data, inform);
     free_memory (inform, data);
 }
@@ -152,9 +153,9 @@ struct str* place_pointers (struct file* inform, struct str* data)
     char* p_beg_str = (inform -> file_buffer);
     char* p_end_str = NULL;
 
-    for (int i = 0; i < (inform -> number_line); i++)             //
-    {                                                         //
-        p_end_str = strchr (p_beg_str, '\n');                 //
+    for (int i = 0; i < (inform -> number_line); i++)
+    {
+        p_end_str = strchr (p_beg_str, '\n');
 
         if (p_end_str != NULL) *p_end_str = '\0';
         else p_end_str = strchr (p_beg_str, '\0') + 1;
@@ -179,13 +180,13 @@ void free_memory (struct file* inform, struct str* data)
 
 //------------------------------------------------------------------------------------------------
 
-int direct_comparator (struct str* data, int j)
+int direct_comparator (const void* data1, const void* data2)
 {
-    char* line1_begin = (data + j) -> p_begin_str;
-    char* line2_begin = (data + j + 1) -> p_begin_str;
+    char* line1_begin = ((struct str*) data1) -> p_begin_str;
+    char* line2_begin = ((struct str*) data2) -> p_begin_str;
 
-    char* line1_end = line1_begin + (data + j) -> str_length;
-    char* line2_end = line2_begin + (data + j + 1) -> str_length;
+    char* line1_end = line1_begin + (((struct str*) data1) -> str_length);
+    char* line2_end = line2_begin + (((struct str*) data2) -> str_length);
 
     while ((!isalpha(*line1_begin)) && (line1_begin != line1_end))
     {
@@ -216,7 +217,7 @@ int direct_comparator (struct str* data, int j)
         }
     }
 
-    return ((*line2_begin) - (*line1_begin));
+    return ((int)(*line1_begin) - (int)(*line2_begin));
 }
 
 //------------------------------------------------------------------------------------------------
@@ -269,7 +270,7 @@ void bubble_sort (struct str* data, struct file* inform)
     {
         for (int j = 0; j < (inform -> number_line) - i - 2; j++)
         {
-            if ((direct_comparator(data, j)) < 0)
+            if ((direct_comparator((data + j), (data + j + 1)) < 0))
             {
                 swap_pointers (data, j);
             }
@@ -294,10 +295,15 @@ void print_text (struct str* data, struct file* inform)
 {
     char* sorted_filename = "hamlet_sorted.txt";
     FILE* finish_file = fopen (sorted_filename, "wb");
-    fwrite (((data + 0)->p_begin_str), sizeof(char), inform->size_of_file, finish_file);
-    free (finish_file);
+
+    for (int i = 0; i < (inform -> number_line); i++)
+    {
+        fwrite (((data + i) -> p_begin_str), sizeof(char), (data + i) -> str_length, finish_file);
+        fprintf (finish_file, "\n");
+    }
+
     fclose (finish_file);
+    free (finish_file);
 }
 
 //-----------------------------------------------------------------------------------------------
-
