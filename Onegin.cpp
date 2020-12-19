@@ -62,7 +62,7 @@ int main (/*int argc, char* argv[]*/)
     data = place_pointers (inform, data);
 
     //bubble_sort (data, inform);
-    qsort (data, inform -> number_line, sizeof (struct str*), (int(*) (const void *, const void *)) direct_comparator);
+    qsort (data, inform -> number_line, sizeof (struct str), (int(*) (const void *, const void *)) direct_comparator);
     print_text  (data, inform);
     free_memory (inform, data);
 }
