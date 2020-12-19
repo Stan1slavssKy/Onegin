@@ -149,18 +149,22 @@ struct str* place_pointers (struct file* inform, struct str* data)
 {
     data = (struct str*) calloc (inform -> number_line, sizeof (struct str));
 
-    char* p_beg_str = inform -> file_buffer - 1;
+    char* p_beg_str = (inform -> file_buffer);
     char* p_end_str = NULL;
 
-    for (int i = 0; i < inform -> number_line; i++)
-    {
-        p_end_str = strchr (p_beg_str, '\n');
+    for (int i = 0; i < (inform -> number_line); i++)             //
+    {                                                         //
+        p_end_str = strchr (p_beg_str, '\n');                 //
+
+        if (p_end_str != NULL) *p_end_str = '\0';
+        else p_end_str = strchr (p_beg_str, '\0') + 1;
 
         (data + i) -> p_begin_str = p_beg_str;
-        (data + i) -> str_length  = p_end_str - p_beg_str;
+        (data + i) -> str_length  = p_end_str - p_beg_str - 1;
 
         p_beg_str = p_end_str + 1;
     }
+
     return data;
 }
 
@@ -290,8 +294,10 @@ void print_text (struct str* data, struct file* inform)
 {
     char* sorted_filename = "hamlet_sorted.txt";
     FILE* finish_file = fopen (sorted_filename, "wb");
-    fwrite (((data)->p_begin_str), sizeof(char), inform->size_of_file, finish_file);
-    free(finish_file);
+    fwrite (((data + 0)->p_begin_str), sizeof(char), inform->size_of_file, finish_file);
+    free (finish_file);
+    fclose (finish_file);
 }
 
 //-----------------------------------------------------------------------------------------------
+
