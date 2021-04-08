@@ -84,18 +84,19 @@ int reverse_comparator (const void* data1, const void* data2)
 
 //------------------------------------------------------------------------------------------------
 
-void bubble_sort (struct str* data, struct file* inform)
+void bubble_sort (struct text* text_info)
 {
-    for (int i = 0; i < (inform -> number_line) - 2; i++)
+    for (int i = 0; i < (text_info -> number_line) - 2; i++)
     {
-        for (int j = 0; j < (inform -> number_line) - i - 2; j++)
+        for (int j = 0; j < (text_info -> number_line) - i - 2; j++)
         {
-            if ((direct_comparator((data + j), (data + j + 1)) > 0))
+            if ((direct_comparator((text_info -> strings + j), (text_info -> strings + j + 1)) > 0))
             {
-                swap_pointers ((data + j), (data + j + 1));
+                swap_pointers ((text_info -> strings + j), (text_info -> strings + j + 1));
             }
         }
     }
+
     printf ("TEXT has been sorted\n");
 }
 
@@ -111,13 +112,40 @@ void swap_pointers (struct str* data1, struct str* data2)
 
 //------------------------------------------------------------------------------------------------
 
-void print_text (struct str* data, struct file* inform, FILE* finish_file)
+void print_text (struct text* text_info, FILE* finish_file)
 {
-    for (int i = 0; i < (inform -> number_line); i++)
+    for (int i = 0; i < (text_info -> number_line); i++)
     {
-        fwrite (((data + i) -> p_begin_str), sizeof(char), (data + i) -> str_length, finish_file);
+        fwrite (((text_info -> strings + i) -> p_begin_str), sizeof(char), (text_info -> strings + i) -> str_length, finish_file);
         fprintf (finish_file, "\n");
     }
+}
+
+//-----------------------------------------------------------------------------------------------
+
+void output (struct text* text_info)
+{
+    FILE* finish_file = fopen ("hamlet_sorted.txt", "wb");
+    fprintf (finish_file, "\nORIGINAL TEXT\n\n");
+    print_text  (text_info, finish_file);
+
+    fclose (finish_file);
+
+    qsort (text_info -> strings, text_info -> number_line, sizeof (struct str), &direct_comparator);
+
+    finish_file = fopen ("hamlet_sorted.txt", "a");
+    fprintf (finish_file, "\nDIRECT SORTED TEXT\n\n");
+    print_text  (text_info, finish_file);
+
+    fclose (finish_file);
+
+    qsort (text_info -> strings, text_info -> number_line, sizeof (struct str), &reverse_comparator);
+
+    finish_file = fopen ("hamlet_sorted.txt", "a");
+    fprintf (finish_file, "\n\n\nREVERSE SORTED TEXT\n\n");
+    print_text  (text_info, finish_file);
+
+    fclose (finish_file);
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -12,12 +12,16 @@
 
 //------------------------------------------------------------------------------------------------
 
-struct file
+struct text 
 {
     int  size_of_file;
     int   number_line;
     char* file_buffer;
+
+    struct str*     strings;
+   // struct lexem* lexemes;
 };
+//сделать флаг который будет выбирать структуру по надобности
 
 struct str
 {
@@ -25,23 +29,31 @@ struct str
     int   str_length;
 };
 
+/*struct lexem
+{
+
+};*/
 //------------------------------------------------------------------------------------------------
+
+char* console_input (int argc, char* argv[]);
 
 char* read_file (char* file_name, int size_of_file);
 
-struct str* place_pointers (struct file* inform, struct str* data);
+int counter_line (char* file_buffer);
+int file_size      (char* file_name);
 
-int counter_line       (int f_size, char* file_buffer);
-int file_size          (char* file_name);
 int direct_comparator  (const void* data1, const void* data2);
 int reverse_comparator (const void* data1, const void* data2);
+void swap_pointers     (struct str* data1, struct str* data2);
 
-void input_inform  (char* file_name, struct file* inform);
-void free_memory   (struct file* inform, struct str* data);
-void swap_pointers (struct str* data1, struct str* data2);
-void bubble_sort   (struct str* data, struct file* inform);
-void print_text    (struct str* data, struct file* inform, FILE* finish_file);
-void quick_sort    (struct str* data, struct file* inform);
+void place_pointers (struct text* text_info);
+void free_memory    (struct text* text_info);
+void bubble_sort    (struct text* text_info);
+void quick_sort     (struct text* text_info);
+void output         (struct text* text_info);
+void print_text     (struct text* text_info, FILE* finish_file);
+
+void input_inform  (char* file_name, struct text* text_info);
 
 //------------------------------------------------------------------------------------------------
 
